@@ -1,0 +1,71 @@
+Amit Mondal #804746916
+CS35L Project 4
+
+First, tr2u.c and tr2b.c were made to partially replicate the functionality of
+the tr command. tr2u.c uses unbuffered I/O and reads and writes using system
+calls, while tr2b.c uses buffered I/O and reads and write using putchar and
+getchar.
+
+The programs are very similar in that they take the same steps to check args.
+The only difference is in the way they read and write. The difference is shown
+below:
+
+tr2b.c
+
+//now actually get and replace the bytes
+char curr;
+for (curr = getchar();curr != EOF;curr = getchar()) {
+    if (feof(stdin)) break;
+    putchar(swap_char(from, to, from_len, curr));
+}
+
+tr2u.c
+
+//now actually get and replace the bytes
+char curr[1];
+int res, out;
+for (res = read(STDIN_FILENO, curr, 1);res > 0;res = 
+    	   		      	    	   read(STDIN_FILENO, curr, 1)) {
+    *curr = swap_char(from, to, from_len, *curr);
+    out = write(STDOUT_FILENO, curr, 1);
+    if (out < 0) {
+       printf("Error writing output");
+       exit(1);
+    }
+}
+
+You can see the replacement logic is the same in both programs; only reading
+and writing is different.
+
+Now use 'head --bytes=5000000 /dev/urandom > output.txt' to create a file with
+5000000 bytes.
+
+Now, you can use strace to see the system calls each program uses. Running
+'strace -o tr_out ./tr2b er ll < output.txt > bout.txt' and opening tr_out shows
+that it has 35 lines, meaning around 35 system calls were made. On the other
+hand, running 'strace -o tr_out2 ./tr2u er ll < output.txt > uout.txt' and
+opening tr_out2 shows that it has 10000031 lines, meaning about that many
+system calls were made. In fact, tr_out2 was so large it caused emacs to
+temporarily freeze while opening it. Thus, you can see that when copying one
+file to another, tr2u has many times more system calls than tr2b because of its
+unbuffered output that makes 2 system calls per byte (one for read, one for
+write).
+
+Now, you can use strace again, but now for writing to the terminal. Running
+'strace -o tr_out3 ./tr2b er ll < output.txt' and opening tr_out3 once again
+shows that about 35 system calls were made. On the other hand, running 
+'strace -o tr_out4 ./tr2u er ll < output.txt' and opening tr_out4 shows that
+again, about 10000031 system calls were made. Running a diff on tr_out2 and
+tr_out_4 shows that while the read/write system calls are the same, the initial
+30 or so system calls are different.
+
+Now, you can time the calls. 
+Running 'time ./tr2b er ll < output.txt' outputs
+real	0m0.003s
+user	0m0.000s
+sys	0m0.001s
+Running 'time ./tr2u er ll < output.txt' outputs
+real	0m48.878s
+user	0m0.285s
+sys	0m5.095s
+

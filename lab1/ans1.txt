@@ -1,0 +1,128 @@
+Amit Mondal
+#804746916
+Lab #1
+
+1. 
+man -k SOME_STRING
+Found by searching through all the options in "man man", then looking up what
+the "apropos" command does.
+
+2. 
+cp: /bin/cp /usr/share/man/man1p/cp.1p.gz /usr/share/man/man1/cp.1.gz
+wc: /usr/bin/wc /usr/share/man/man1p/wc.1p.gz /usr/share/man/man1/wc.1.gz
+Found using the "whereis" hint provided in lab.
+
+3.
+The three executables with single-name are [, w, and X
+w shows who is logged in and what they are doing
+X is a portable, network-transparent window system
+[ evaluates a conditional expression
+
+The three commands were found by executing "ls -d ?" in the /usr/bin directory.
+Their descriptions were found in their man pages, except for the description of
+[, which does not have a man page.
+
+4.
+/etc/alternatives/emacs
+Found by going into the /usr/bin folder, then executing "ll | less" to search
+the list of files in the current directory. Searching for "emacs" in less shows
+that it is a soft link to /etc/alternatives/emacs
+
+5.
+g+s sets the group id (gid) bit in chmod symbolic mode
+o-w makes a file non-writeable by others
+Found by reading about symbolic mode in the chmod man pages
+
+6. 
+find DIRECTORY -mtime -21
+Found by searching the find man pages for the word "time" until the
+appropriate command was found
+
+7.
+find . -mtime -21
+./Documents
+./Documents/cs31
+./Documents/cs31/project1
+./Documents/cs31/project2
+./Documents/cs31/project3
+./.cache/abrt
+./.cache/abrt/lastnotification
+./.bash_history
+./.emacs.d/auto-save-list
+./cs35.txt
+./.php_history
+./.viminfo
+./bla2-new
+./.lesshst
+./bla1-hard
+./bla2-soft
+./bla1-new
+
+8.
+There are 354 symbolic links in /usr/bin/
+Found by using "whereis find" to find the location of find, then using
+"find . -maxdepth 1 -type l | wc -l" to print out how many symbolic links
+there are.
+
+9.
+The oldest file in /usr/lib is libgamin-1.so.0.1.10, from Mar. 3, 2010,
+using ll -t
+Found by searching the ls man pages for the word "time", and iterating
+through the search results until a command was found that listed the
+elements by age.
+
+10.
+When used without arguments, locale gets its data from the LC_*
+environmental variables.
+Found by reading the locale man pages.
+
+11.
+The emacs commands containing sort are:
+Buffer-menu-sort
+Buffer-menu-sort-by-column
+ibuffer-invert-sorting
+ibuffer-toggle-sorting-mode
+rmail-sort-by-author
+rmail-sort-by-correspondent
+rmail-sort-by-date
+rmail-sort-by-labels
+rmail-sort-by-lines
+rmail-sort-by-recipients
+rmail-sort-by-subject
+sort-columns
+sort-fields
+sort-lines
+sort-numeric-fields
+sort-pages
+sort-paragraphs
+sort-regexp-fields
+
+Found by using C-h a to search commands,
+as mentioned in the emacs tutorial.
+
+12.
+C-M-a moves to the beginning of a current or preceding defun
+C-M-b moves backwards across one balanced expression
+C-M-c exits from the innermost recursive buffer
+C-M-d moves forward down one level of parentheses
+C-M-e moves to the end of a current of following defun
+C-M-f moves forward across one balanced expression
+C-M-h marks the current or following defun
+
+Found by using C-h b to search key bindings, then using C-s "C-M-a" to
+find all the commands in order.
+
+13.
+C-g allows you to quit out of a running command (like a search), or to
+quit out of a partially-typed command.
+
+14.
+Yank pastes the last text killed.
+Found by using C-h b to find key bindings, and C-s "yank" to find the
+definition of the command.
+
+15. 
+From visually comparing the dired command in emacs and the output of
+ls -l, it appears the only difference is that emacs shows the ".." and
+"." directories for the parent and current directories, while ls -l does not.
+   

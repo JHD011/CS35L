@@ -1,0 +1,64 @@
+#!/usr/bin/bash
+
+#arg 1 is the path
+dir="$1"
+#set internal field separator
+IFS=$'\n'
+#go to directory
+cd "$dir"
+#loop through files
+for file1 in .* *
+do
+    #as dictated in the spec, warn and skip if a file is not readable
+    if [[ ! (-r "$file1") ]]; then
+	echo "Warning: $file1 is not readable!"
+	continue;
+    fi
+    #loop through files again for comparison (probably inefficient but oh well)
+    for file2 in .* *
+    do
+	#make sure $file1 and $file2 aren't the same file
+	if [[ "$file1" = "$file2" ]]; then
+	    continue
+	fi
+	#make sure $file1 and $file2 are regular files 
+	if [[ (-f "$file2") && (-f "$file1") ]]; then
+	    #compare the two files
+	    if cmp -s "$file1" "$file2"; then
+		#check if file1 is a dotfile and file2 isn't
+		if [[ "$file1" == .* && "$file2" != .* ]]; then
+		    #remove the file that isn't a dotfile and create a hard link
+		    filename="$file2"
+		    #remove the second file
+		    rm "$file2"
+		    #create hard link
+		    ln "$file1" "$filename"
+		#now check if file2 is a dotfile and file1 isn't
+		elif [[ "$file2" == .* && "$file1" != .* ]]; then
+		    #remove the file that isn't a dotfile and create a hard link
+		    filename="$file1"
+		    #remove the first file
+		    rm "$file1"
+		    #create hard link
+		    ln "$file2" "$filename"
+		#If the first two conditions were false, then either both files
+		#are dotfile or neither are. In this case, we do a lexicographic
+		#comparison
+		elif [[ "$file1" < "$file2" ]]; then
+		    filename="$file2"
+		    #remove the second file
+		    rm "$file2"
+		    #create hard link
+		    ln "$file1" "$filename"
+		#the only remaining case is if file1 > file2
+		else 		    		   
+		    filename="$file1"
+		    #remove the first file
+		    rm "$file1"
+		    #create hard link
+		    ln "$file2" "$filename"
+		fi
+	    fi
+	fi
+    done
+done

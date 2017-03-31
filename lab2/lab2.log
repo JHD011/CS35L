@@ -1,0 +1,101 @@
+Amit Mondal
+#804746916
+CS35L Assignment 2
+
+Run 'locale | grep "LC_CTYPE"' and check to make sure LC_CTYPE="C" shows up
+
+Run 'sort ./usr/share/dict/words > words' to create the file 'words' in the 
+current working directory containing a sorted copy of /dict/words
+
+Run 'wget http://web.cs.ucla.edu/classes/winter17/cs35L/assign/assign2.html'
+to download a copy of the webpage.
+
+Run "tr -c 'A-Za-z' '[\n*]' < assign2.html | less". Piping the output into 
+less makes it easier to view the results. The command essentially takes 
+the complement of the set 'A-Za-z' (everything that is not an upper or lower
+case character) and replaces it with a newline. Thus, the output is all the 
+words in the html file with all the non-alphabetic chars replaced with newlines.
+The '-c' option is the reason the complement of the set is chosen.
+
+Run "tr -cs 'A-Za-z' '[\n*]' < assign2.html | less". This command's output looks
+similar to that of the last one, but it only has a single newline character
+between each word. The difference is the addition of the -s option, or 
+"--squeeze-repeats", which replaces multiple occurences of an input character
+with a single occurence. In this case, it replaces the multiple newline chars
+with only a single one.
+
+Run "tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort | less". This command's
+output is identical to that of the last one, except piping its output
+into sort means the output is lexicographically sorted. 
+
+Run "tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | less". This command's
+output is identical to that of the last one, except adding the -u, or "--unique"
+option to the sort eliminates duplicate characters in the output. Thus, each 
+line of output is unique.
+
+Run "tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm - words | less".
+This command build on the last one by piping its results into the comm command.
+The comm command takes the output and compares it to the contents of the "words"
+file, printing three columns in its output. The first column contains words 
+unique to assign2.html (of which there appear to be very few); the second 
+contains words unique to the file "words", and the third contains words in 
+both files. For example, searching for the word "generally" in less shows 
+it in the third column.
+
+Run "tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm -23 - words | less"
+This command invokes the "-2" and "-3" options of the comm command, hiding the
+second and third columns of the output. This allows us to see that there are
+several words, like "Eggert," not in the "words" file.
+
+Run "wget http://mauimapp.com/moolelo/hwnwdseng.htm" to download a copy of the 
+web page. At first I tried to write a shell script to get the Hawaiian word,
+but decided it was inefficient.
+
+Run 'grep "<td>.\{1,\}<\/td>" hwnwdseng.htm | \'. This selects lines with <td>
+some_content</td>.
+
+Next, run "sed '1~2d' | \" to get every other line of output, leaving only 
+Hawaiian words.
+
+Next, run "sed 's/<[^>]\+>//g'" | \" to remove all the HTML tags from the file.
+
+Next, run "sed -e 's/^[ ]*//' | \" to remove the initial four spaces on each
+line.
+
+Next, run 'grep "[A-Z]" | \' to remove newlines (not strictly necessary since
+they will be removed in the last command anyways)
+
+Next, run "tr '[:upper:]' '[:lower:]' | \" to replace uppercase chars with
+lowercase
+
+Next, run "tr '`' "'" | \" to replace all 'okinas with single quotes
+
+Finally, we check each line for only valid Hawaiian chars, sort the list, and
+ensure it is unique using 'grep "^[pk\' mnwlhaeiou]\{1,\}$" | sort -u > hwords'
+You can see it finally puts the result into the file hwords at the end.
+
+The contents of buildwords.sh looks like this:
+#!/bin/bash
+grep "<td>.\{1,\}<\/td>" | \
+sed '1~2d' | \
+sed 's/<[^>]\+>//g' | \
+sed -e 's/^[ ]*//' | \
+grep "[A-Z]" | \
+tr '[:upper:]' '[:lower:]' | \
+tr '`' "'" | \
+grep "^[pk\' mnwlhaeiou]\{1,\}$" | sort -u | xargs -0 echo
+
+Of course, I had to run chmod +x buildwords.sh before executing.
+
+To check the spelling of Hawaiian rather than English words, you would run 
+"tr '[:upper:]' '[:lower:]' < assign2.html | \
+tr -cs "pk\'mnwlhaeiou" '[\n*]' | \
+sort -u | comm -23 - hwords | wc -l"
+This command converts uppercase chars to lowercase chars, 
+replaces all lines not containing lowercase valid Hawaiian chars with newlines,
+sorts the list and removes duplicates, and finally compares the result with 
+hwords. The result of the command was 205, indicating that there are 205
+non-Hawaiian words on the webpage.
+
+Running 'tr -cs 'A-Za-z' '[\n*]' < hwords | sort -u | comm -23 - words | wc -l',
+we can see that there are 71 words in hwords that are not in words.

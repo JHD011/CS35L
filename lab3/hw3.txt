@@ -1,0 +1,37 @@
+Amit Mondal #804746916
+CS35L Project 3
+
+Q1. It appears that line was supposed to be part of a switch statement, but
+    there is an unintentional underscore after the word case. In the diff, 
+    you can see the line above it omits the underscore. Thus, the fix omits
+    it because it was incorrect.
+
+Q2. It looks like the original code would get the locale format, then loop
+    through the first two characters which specify the language (e.g. EN) and
+    use that language. It appears Brady's version no longer does this, so it
+    could pose some problems in that it no longer changes language versions.
+
+Q3. Trying to run the script on an empty file gives the following stack trace:
+
+     Traceback (most recent call last):
+       File "randline.py", line 70, in <module>
+	 main()
+       File "randline.py", line 64, in main
+	 sys.stdout.write(generator.chooseline())
+       File "randline.py", line 34, in chooseline
+	 return random.choice(self.lines)
+       File "/usr/lib64/python2.7/random.py", line 274, in choice
+	 return seq[int(self.random() * len(seq))]  # raises IndexError if seq 
+	 is empty
+     IndexError: list index out of range
+    
+    You can see that the python interpreter throws an IndexError when trying to 
+    access an index of an empty string.
+
+Q4. Trying to run randline.py under python3 gives the following error:
+
+     File "randline.py", line 65
+     except IOError as (errno, strerror):
+    
+    The error happens because of changes in syntax between python 2.x and
+    python 3 involving usage of tuples.

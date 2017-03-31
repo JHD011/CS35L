@@ -1,0 +1,137 @@
+Amit Mondal
+#804746916
+HW1
+
+Exercise 1.1
+2.
+C-s p u b l i c ENTER
+
+3.
+C-s l a b o r a t o r y M-RIGHT
+
+4.
+C-s s e l f -  M-RIGHT
+
+5.
+C-s arrow M-RIGHT
+
+6.
+C-e
+
+7.
+C-a
+
+8.
+Use C-a and C-e
+
+9.
+No
+
+10.
+C-x C-c
+
+Exercise 1.2
+2.
+M-x goto-line 18 C-k
+
+2.
+C-s D E L E T E C-a C-k
+
+3.
+M-< C-s h t t p : / / e n . C-s DOWN C-SP UP UP C-w
+
+4.
+C-s < ! - - LEFT LEFT LEFT LEFT C-SP RIGHT RIGHT RIGHT RIGHT RIGHT RIGHT RIGHT C-w
+C-s < ! - - C-a C-k
+
+Exercise 1.3
+2.
+M-% n t SP 1 ENTER n t SP 3 7 ENTER SP SP C-g
+
+3.
+M-< M-% U T F - 8 ENTER U T F - A S C I I ENTER SP C-g
+
+4.
+C-s < / o l > UP C-e ENTER
+
+5.
+C-x s C-x c
+
+Exercise 1.4
+3.
+M-> UP UP RIGHT C-SP C-e M-w C-r < / h t m l DOWN C-y
+
+4.
+M-> C-r + C-r C-r RIGHT C-SP C-e M-w UP C-r < p > s h o u l d C-a C-k C-y
+M-> C-r < ! - - C-r C-r C-SP M-e DOWN M-w C-r < h 2 > S u b C-r DOWN C-y C-a RIGHT DEL UP RIGHT DEL
+M-> C-r D E L E T E C-a RIGHT C-SP C-e M-w C-r < h 2 > H O M E DOWN C-y
+M-> C-r < ! - - C-r C-r C-r C-r C-SP C-e M-w C-r < h 2 > L a b C-r C-r DOWN DOWN C-y
+
+5.
+M-> C-SP C-r - - - C-r ENTER C-w
+
+6.
+C-x u
+
+7.
+UP < ! - - C-> - - >
+
+8.
+M-% <ol> ENTER <Ol> ENTER SP SP SP SP SP SP SP
+The above line replaces all 7 instances of <ol> with <Ol>
+
+Exercise 1.5
+1.
+M-x make-directory ENTER junk ENTER
+C-x C-f j u n k / h e l l o . c
+<<paste in C code>>
+M-x compile DEL DEL DEL DEL DEL DEL g c c h e l l o . c ENTER
+M-! . / j u n k / a . o u t C-x o C-SP M-> M-w C-x o C-x f j u n k / h e l l o - o u t ENTER C-y
+
+#include <stdio.h>
+int
+main (void)
+{
+  char n = '\n';
+  char b = '\\';
+  char q = '"';
+  char const *p = "#include <stdio.h>%cint%cmain (void)%c{%c  char n = '%cn';%c  char b = '%c%c';%c  char q = '%c';%c  char const *p = %c%s%c;%c  printf (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);%c  return 0;%c}%c";
+  printf (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);
+  return 0;
+}
+
+Exercise 1.6
+1.
+M-x b ENTER
+
+2.
+( r a n d o m ) C-j
+
+3.
+( s e t q SP x ( r a n d o m ) ) C-j
+( s e t q SP y ( r a n d o m ) ) C-j
+
+4.
+( * x y ) C-j
+
+5.
+M-: ( * x y ) ENTER
+
+The outputs are the same except for the hexadecimal
+-78828042525770099 (#o173477445003672277215, #x1ee7f2501ee97e8d)
+
+6.
+Although the two integers could be random, in a mathematical sense, we know
+they are not, since most computers cannot produce truly random numbers.
+Instead, it uses a seed and generates pseudorandom numbers.
+
+For the two-value product to be correct, it must be smaller than
+most-positive-fixnum in order to avoid triggering any integer
+overflow errors. However, if (random) is truly random, then the
+set of numbers (a, b) where a * b is less than
+most-positive-fixnum is finite and thus, is bounded.
+On the other hand, the set of numbers for which a * b
+is greater than most-positive-fixnum is every integer not in the
+first set, meaning that it is an infinite unbounded set. Because
+we are comparing the probability of two integers falling within
+a closed set compared to an infinite unbounded set, the probability is zero.

@@ -1,0 +1,226 @@
+To thoroughly test both sfrobs and sfrobu against one another, I wrote a shell
+script to test each one on larger and larger file sizes. The script is shown
+below:
+
+test.sh
+
+     #write a function to test with files of different sizes
+     run_test() {
+	 head --bytes=$1 /dev/urandom > input.txt
+	 echo "*******TEST WITH $1 BYTES ********"
+	 echo "sfrob: "
+         time ~/proj5files/sfrob < input.txt > output.txt
+         echo "__________________________________"
+	 echo "sfrobs: "
+	 time ~/proj5files/sfrobs < input.txt > output.txt
+	 echo "__________________________________"
+	 echo "sfrobu: "
+	 time ~/proj5files/sfrobu < input.txt > output.txt
+	 echo "__________________________________"
+	 echo "__________________________________"
+	 echo "sfrobs -f: "
+	 time ~/proj5files/sfrobs -f  < input.txt > output.txt
+	 echo "__________________________________"
+	 echo "sfrobu -f: "
+	 time ~/proj5files/sfrobu -f < input.txt > output.txt
+	 echo "*********TEST COMPLETED***********"
+     }
+
+     #create temp dir
+     temp=$(mktemp -d)
+     cd $temp
+
+     run_test 1000
+     run_test 10000
+     run_test 100000
+     run_test 1000000
+     run_test 10000000
+
+     #remove temp dir
+     rm -rf $temp
+
+Here is the output of the script:
+
+*******TEST WITH 1000 BYTES ********
+sfrob:
+
+real	0m0.001s
+user	0m0.001s
+sys	0m0.000s
+__________________________________
+sfrobs:
+
+real	0m0.005s
+user	0m0.000s
+sys	0m0.006s
+__________________________________
+sfrobu:
+
+real	0m0.003s
+user	0m0.000s
+sys	0m0.003s
+__________________________________
+__________________________________
+sfrobs -f:
+
+real   0m0.004s
+user   0m0.002s
+sys    0m0.004s
+__________________________________
+sfrobu -f:
+
+real   0m0.003s
+user   0m0.000s
+sys    0m0.003s
+*********TEST COMPLETED***********
+*******TEST WITH 10000 BYTES ********
+sfrob:
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.001s
+__________________________________
+sfrobs:
+
+real	0m0.004s
+user	0m0.001s
+sys	0m0.005s
+__________________________________
+sfrobu:
+
+real	0m0.017s
+user	0m0.000s
+sys	0m0.017s
+__________________________________
+__________________________________
+sfrobs -f:
+
+real   0m0.009s
+user   0m0.007s
+sys    0m0.003s
+__________________________________
+sfrobu -f:
+
+real   0m0.017s
+user   0m0.000s
+sys    0m0.017s
+*********TEST COMPLETED***********
+*******TEST WITH 100000 BYTES ********
+sfrob:
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.001s
+__________________________________
+sfrobs:
+
+real	0m0.004s
+user	0m0.003s
+sys	0m0.003s
+__________________________________
+sfrobu:
+
+real	0m0.152s
+user	0m0.007s
+sys	0m0.145s
+__________________________________
+__________________________________
+sfrobs -f:
+
+real   0m0.081s
+user   0m0.082s
+sys    0m0.002s
+__________________________________
+sfrobu -f:
+
+real   0m0.159s
+user   0m0.003s
+sys    0m0.156s
+*********TEST COMPLETED***********
+*******TEST WITH 1000000 BYTES ********
+sfrob:
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.001s
+__________________________________
+sfrobs:
+
+real	0m0.010s
+user	0m0.006s
+sys	0m0.008s
+__________________________________
+sfrobu:
+
+real	0m1.575s
+user	0m0.046s
+sys	0m1.528s
+__________________________________
+__________________________________
+sfrobs -f:
+
+real   0m1.146s
+user   0m1.146s
+sys    0m0.013s
+__________________________________
+sfrobu -f:
+
+real   0m1.612s
+user   0m0.054s
+sys    0m1.558s
+*********TEST COMPLETED***********
+*******TEST WITH 10000000 BYTES ********
+sfrob:
+
+real	0m0.003s
+user	0m0.001s
+sys	0m0.001s
+__________________________________
+sfrobs:
+
+real	0m0.069s
+user	0m0.056s
+sys	0m0.040s
+__________________________________
+sfrobu:
+
+real	0m16.182s
+user	0m0.553s
+sys	0m15.627s
+__________________________________
+__________________________________
+sfrobs -f:
+
+real   0m14.336s
+user   0m14.351s
+sys    0m0.106s
+__________________________________
+sfrobu -f:
+
+real   0m16.307s
+user   0m0.511s
+sys    0m15.794s
+*********TEST COMPLETED***********
+
+Out of sfrobs, sfrob, and sfrobu, sfrob was consistently the fastest, with a
+runtime noticeably lower than both sfrobs and sfrob. This is likely because
+it has a much lower overhead than sfrobs (which must use the default functions
+like sort and tr, which are generalized for other tasks), not to mention the 
+fact that it uses buffered I/O.
+
+You can see that as the input file sizes grow larger, sfrobu lags farther and
+farther behind sfrobs. Indeed, sfrobu is actually slightly faster than sfrobs
+in the 1000 byte test, but in every other test, sfrobu is noticeably slower.
+This means that although sfrobu has a slightly smaller overhead, it scales much
+worse than sfrobs.
+
+Furthermore, the majority of sfrobu's runtime is listed under sys, implying that
+sfrobu is making many more syscalls than sfrobs, which has a consistently low
+time listed under sys.
+
+One strange thing to note is that adding the -f option makes sfrobs run
+significantly slower. Although it still runs a bit faster than sfrobu, the -f
+option probably prevents the sort command from making some optimization, making
+it nearly as slow as sfrobu. On the other hand, sfrobu is nearly unaffected by
+the -f option.
+

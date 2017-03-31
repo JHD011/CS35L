@@ -1,0 +1,42 @@
+Amit Mondal #804746916
+CS35L Project 3
+
+Run 'wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz' to get the
+compressed coreutils files
+
+Run 'tar -xzvf coreutils-7.6.tar.gz' to decompress files in current directory
+
+Run 'mkdir coreutils' to create an install destination, then enter the coreutils
+source folder with 'cd coreutils-7.6.tar.gz'
+
+Run './configure --prefix=/u/cs/ugrad/amit/coreutils' as mentioned in the
+INSTALL file to configure coreutils. Also, note that Prof. Eggert is credited
+in the README file.
+
+Then run 'make' and 'make install' to compile and then install the coreutils
+package.
+
+Run 'export LC_ALL='en_US.UTF-8', then 'coreutils/bin/ls -l' in the home
+directory, and compare with the result of 'ls -l' to see the difference in date
+format.
+
+Now copy and paste Brady's patch into a file called coreutilfix.patch.
+
+In the 'coreutils-7.6/' directory, run 'patch -p1 < ../coreutilfix.patch'. The 
+patch ended with two errors reading 'patch unexpectedly ended in middle of line'
+, but it still successfully patched two hunks.
+
+Because the patched and unpatched versions are expected to exist alongside 
+one another, create a directory for the fixed version of coreutils with
+'mkdir fixedcoreutils'. Go to the 'coreutils-7.6' directory and configure it
+with the new directory: './configure --prefix=/u/cs/ugrad/amit/fixedcoreutils'
+
+Now run 'make' and 'make install' once again. Notice that trying
+'fixedcoreutils/bin/ls -l' and comparing with 'ls -l' yields identical
+results. Running 'coreutils/bin/ls -l' allows you to see the old, unfixed
+version of ls.
+
+Now, we check to make sure it works on a file that is at least a year old.
+Run 'touch -t 201209141001 someoldfile' and compare the results of 
+'fixedcoreutils/bin/ls -l' and 'ls -l'. They should both have the date
+Sep. 14 2012.

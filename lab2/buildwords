@@ -1,0 +1,9 @@
+#!/bin/bash
+grep "<td>.\{1,\}<\/td>" | \
+sed '1~2d' | \
+sed 's/<[^>]\+>//g' | \
+sed -e 's/^[ ]*//' | \
+grep "[A-Z]" | \
+tr '[:upper:]' '[:lower:]' | \
+tr '`' "'" | \
+grep "^[pk\' mnwlhaeiou]\{1,\}$" | sort -u | xargs -0 echo

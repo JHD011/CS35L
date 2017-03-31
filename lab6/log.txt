@@ -1,0 +1,63 @@
+Amit Mondal #804746916
+CS35L Project 6
+
+First, run sort --version to make sure it is properly updated. My version was
+8.26.
+
+To generate the 10,000,000 random floats, the od command was used with the -tf
+options. After some experimentation to determine the number of bytes necessary
+(each float was 8 bytes, so we need 80,000,000 bytes' worth of floats), I
+arrived upon the command od -tf -N 80000000 < /dev/urandom. Then, the sed and tr
+commands must be used to replace the 7-digit address spaces at the front of each
+line. The command "sed 's/^.\{7\}//'" deletes the first seven characters of
+each line. Now, the floats must be split to one-per-line. The command 
+"tr ' ' '\n' | sed '/^$/d'" uses tr to replaces spaces with newlines, then uses
+sed to remove empty lines. The final command is as follows:
+"od -tf -N 80000000 < /dev/urandom | sed 's/^.\{7\}//' | tr ' ' '\n' | 
+tr ' ' '\n' | sed '/^$/d' > random.txt". Looking through the output, I noticed
+that for some reason, there were random two-digit numbers appearing in
+random.txt several thousand lines in, so I ran "awk 'length($0)>2' random.txt"
+to remove them.
+
+Then, I ran and timed a general numeric sort with "time -p sort -g random.txt >
+/dev/null"
+The output is as follows:
+real 43.72
+user 227.94
+sys 0.68
+
+Running sort -g --parallel=1 random.txt > /dev/null resulted in the following:
+real 207.16
+user 206.70
+sys 0.44
+
+Running sort -g --parallel=2 random.txt > /dev/null resulted in the following:
+real 111.44
+user 212.47
+sys 0.37
+
+Running sort -g --parallel=4 random.txt > /dev/null resulted in the following:
+real 65.32
+user 221.77
+sys 0.51
+
+Running sort -g --parallel=8 random.txt > /dev/null time -p sort -g random.txt >
+resulted in the following:
+real 43.19
+user 227.25
+sys 0.66
+
+You can see that running sort without the parallel option has about the same
+real time as running with the parallel=8 option. All of the other parallel
+options were noticeably slower. Similarly, the sys and user time are about
+the same between sort and sort with the parallel=8 option. This may imply
+that default sort is also multithreaded.
+
+
+
+
+
+
+
+
+
